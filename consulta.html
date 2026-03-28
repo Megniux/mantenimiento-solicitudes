@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Consulta de Órdenes</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.filtros {
+    max-width: 800px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: #007BFF;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Consulta de Órdenes</h2>
+
+<div class="filtros">
+    <input type="text" id="busqueda" placeholder="Buscar por número">
+    
+    <select id="estadoFiltro">
+        <option value="">Todos</option>
+        <option>Nuevo</option>
+        <option>Pendiente</option>
+        <option>En proceso</option>
+        <option>Esperando proveedor</option>
+        <option>Cerrado</option>
+    </select>
+
+    <button onclick="cargar()">Filtrar</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>N° Orden</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Equipo</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// TU CONFIG
+const firebaseConfig = {
+  apiKey: "XXXXX",
+  authDomain: "XXXXX",
+  projectId: "XXXXX",
+  storageBucket: "XXXXX",
+  messagingSenderId: "XXXXX",
+  appId: "XXXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.cargar = async function () {
+
+    const tabla = document.getElementById("tabla");
+    tabla.innerHTML = "";
+
+    const busqueda = document.getElementById("busqueda").value.toLowerCase();
+    const estadoFiltro = document.getElementById("estadoFiltro").value;
+
+    const querySnapshot = await getDocs(collection(db, "ordenes"));
+
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+
+        // FILTROS
+        if (busqueda && !data.numeroOrden.toLowerCase().includes(busqueda)) return;
+        if (estadoFiltro && data.estado !== estadoFiltro) return;
+
+        const fila = `
+            <tr>
+                <td>${data.numeroOrden}</td>
+                <td>${data.tipo}</td>
+                <td>${data.estado}</td>
+                <td>${data.equipo}</td>
+                <td>${data.descripcion}</td>
+            </tr>
+        `;
+
+        tabla.innerHTML += fila;
+    });
+}
+
+// Carga inicial
+cargar();
+
+</script>
+
+</body>
+</html>
