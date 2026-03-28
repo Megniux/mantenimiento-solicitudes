@@ -1,58 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Solicitud de Mantenimiento</title>
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #f2f2f2;
-            padding: 40px;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            max-width: 500px;
-            margin: auto;
-            border-radius: 10px;
-        }
-        h2 {
-            text-align: center;
-        }
-        input, textarea, select, button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 10px;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Solicitud de Mantenimiento</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #f2f2f2;
+    padding: 40px;
+}
+.container {
+    background: white;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 10px;
+}
+input, textarea, select, button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+}
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
     <h2>Solicitud de Mantenimiento</h2>
 
-    <input type="text" placeholder="Nombre" id="nombre">
-    <input type="text" placeholder="Equipo" id="equipo">
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="text" id="equipo" placeholder="Equipo">
     
     <select id="tipo">
         <option>Correctivo</option>
         <option>Preventivo</option>
     </select>
 
-    <textarea placeholder="Descripción del problema" id="descripcion"></textarea>
+    <textarea id="descripcion" placeholder="Descripción"></textarea>
 
-    <button onclick="enviar()">Enviar</button>
+    <button onclick="guardar()">Enviar</button>
 </div>
 
-<script>
-function enviar() {
-    alert("Solicitud enviada (modo prueba)");
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// PEGÁ ACA TU CONFIG ↓↓↓
+const firebaseConfig = {
+  apiKey: "XXXXX",
+  authDomain: "XXXXX",
+  projectId: "XXXXX",
+  storageBucket: "XXXXX",
+  messagingSenderId: "XXXXX",
+  appId: "XXXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.guardar = async function () {
+    const nombre = document.getElementById("nombre").value;
+    const equipo = document.getElementById("equipo").value;
+    const tipo = document.getElementById("tipo").value;
+    const descripcion = document.getElementById("descripcion").value;
+
+    try {
+        await addDoc(collection(db, "ordenes"), {
+            nombre,
+            equipo,
+            tipo,
+            descripcion,
+            fecha: new Date()
+        });
+
+        alert("Solicitud guardada correctamente");
+
+        document.getElementById("nombre").value = "";
+        document.getElementById("equipo").value = "";
+        document.getElementById("descripcion").value = "";
+
+    } catch (e) {
+        alert("Error al guardar");
+        console.error(e);
+    }
 }
 </script>
 
