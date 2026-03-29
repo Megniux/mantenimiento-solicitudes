@@ -115,6 +115,71 @@ button:hover {
     font-size: 18px;
 }
 
+/* TARJETA */
+.form-card {
+    width: 100%;
+}
+
+/* SECCIONES */
+.form-section {
+    margin-bottom: 20px;
+}
+
+.form-section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #1f3a5f;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+/* INPUTS CON ICONO */
+
+.icon-input i {
+    color: #1f3a5f;
+}
+
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0 10px;
+    background: white;
+}
+
+.input-with-icon i {
+    color: #1f3a5f;
+    margin-right: 8px;
+}
+
+.input-with-icon input,
+.input-with-icon select {
+    border: none;
+    outline: none;
+    padding: 10px 0;
+    width: 100%;
+    font-size: 14px;
+}
+
+/* TEXTAREA */
+textarea {
+    height: 100px;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    background: #1f3a5f;
+    border-radius: 8px;
+}
+
+.btn-primary i {
+    margin-right: 8px;
+}
+
 </style>
 </head>
 
@@ -137,51 +202,70 @@ button:hover {
 </div>
     
 <div class="container">
-    <h2>Solicitud de Mantenimiento</h2>
+    <div class="form-card">
 
-    <div class="form-group">
-        <label>Solicitante</label>
-        <input type="text" id="solicitante">
+        <h2><i class="fa-solid fa-file-circle-plus"></i> Solicitud de Mantenimiento</h2>
+
+        <div class="form-section">
+            <h3>Datos generales</h3>
+
+            <div class="form-group">
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="solicitante" placeholder="Solicitante">
+                </div>
+            </div>
+
+            <div class="form-group icon-input">
+                <i class="fa-solid fa-list"></i>
+                <select id="tipo" onchange="mostrarFrecuencia()">
+                    <option value="Correctivo">Correctivo</option>
+                    <option value="Preventivo">Preventivo</option>
+                </select>
+            </div>
+
+            <div class="form-group icon-input" id="grupoFrecuencia" style="display:none;">
+                <i class="fa-solid fa-repeat"></i>
+                <input type="text" id="frecuencia" placeholder="Frecuencia (ej: mensual)">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Ubicación y equipo</h3>
+
+            <div class="form-group icon-input">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" id="ubicacion" placeholder="Locación">
+            </div>
+
+            <div class="form-group icon-input">
+                <i class="fa-solid fa-gears"></i>
+                <input type="text" id="equipo" placeholder="Equipo">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Detalle</h3>
+
+            <div class="form-group">
+                <textarea id="descripcion" placeholder="Descripción del problema o tarea"></textarea>
+            </div>
+
+            <div class="form-group icon-input">
+                <i class="fa-solid fa-flag"></i>
+                <select id="prioridad">
+                    <option>Baja</option>
+                    <option selected>Media</option>
+                    <option>Alta</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="guardar()" class="btn-primary">
+            <i class="fa-solid fa-paper-plane"></i> Enviar solicitud
+        </button>
+
     </div>
-
-    <div class="form-group">
-        <label>Tipo de solicitud</label>
-        <select id="tipo" onchange="mostrarFrecuencia()">
-            <option value="Correctivo">Correctivo</option>
-            <option value="Preventivo">Preventivo</option>
-        </select>
-    </div>
-
-    <div class="form-group" id="grupoFrecuencia" style="display:none;">
-        <label>Frecuencia</label>
-        <input type="text" id="frecuencia" placeholder="Ej: mensual, semanal">
-    </div>
-
-    <div class="form-group">
-        <label>Locación</label>
-        <input type="text" id="ubicacion">
-    </div>
-
-    <div class="form-group">
-        <label>Equipo</label>
-        <input type="text" id="equipo">
-    </div>
-
-    <div class="form-group">
-        <label>Descripción</label>
-        <textarea id="descripcion"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label>Prioridad</label>
-        <select id="prioridad">
-            <option>Baja</option>
-            <option selected>Media</option>
-            <option>Alta</option>
-        </select>
-    </div>
-
-    <button onclick="guardar()">Enviar solicitud</button>
 </div>
 
 <div class="footer">
@@ -193,7 +277,14 @@ button:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// FIRESTORE (datos)
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// AUTH (login)
+import { getAuth, onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     
 // CONFIG FIREBASE
 const firebaseConfig = {
