@@ -93,7 +93,8 @@ const auth = getAuth(app);
 
 // PROTECCIÓN
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
+    if (user === null) {
+        // Espera real: Firebase ya resolvió estado
         window.location.href = "login.html";
     }
 });
