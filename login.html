@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #eef1f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #1f3a5f;
+    color: white;
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Login</h2>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Contraseña">
+
+    <button onclick="login()">Ingresar</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDew-CFyPQ8fIUPQf_vnInM9-JZEuV1zi8",
+    authDomain: "mantenimiento-app-170e5.firebaseapp.com",
+    projectId: "mantenimiento-app-170e5",
+    storageBucket: "mantenimiento-app-170e5.firebasestorage.app",
+    messagingSenderId: "555398253444",
+    appId: "1:555398253444:web:565d98dbbe52844b5bebd1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = async function() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "index.html";
+    } catch (e) {
+        alert("Error de login");
+    }
+}
+</script>
+
+</body>
+</html>
