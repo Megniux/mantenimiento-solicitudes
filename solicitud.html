@@ -261,7 +261,8 @@ window.guardar = async function () {
 const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
+    if (user === null) {
+        // Espera real: Firebase ya resolvió estado
         window.location.href = "login.html";
     }
 });
