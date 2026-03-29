@@ -27,10 +27,14 @@ body {
     margin-right: 20px;
 }
 
-.header h1 {
+.header-text {
     display: flex;
     align-items: center;
-    justify-content: center;color: white;
+    justify-content: center;
+}
+    
+.header h1 {
+    color: white;
     font-size: 32px;
 }
 
@@ -63,7 +67,7 @@ button:hover {
 <div class="header">
     <div class="header-content">
         <img src="logo.jpg" class="logo">
-        <div class="header h1">
+        <div class="header-text">
             <h1>Sistema de Mantenimiento</h1>
         </div>
         <button onclick="logout()" style="position:absolute; right:20px;">
