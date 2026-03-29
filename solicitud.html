@@ -193,8 +193,7 @@ button:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     
 // CONFIG FIREBASE
 const firebaseConfig = {
@@ -301,6 +300,13 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = "login.html";
     }
 });
+
+//LOGOUT
+window.logout = async function() {
+    await signOut(auth);
+    window.location.href = "login.html";
+}
+    
 </script>
     
 </body>
