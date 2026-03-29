@@ -6,54 +6,126 @@
 
 <style>
 body {
-    font-family: Arial;
-    background-color: #f2f2f2;
-    padding: 40px;
+    font-family: Arial, sans-serif;
+    background: #eef1f5;
+    margin: 0;
 }
+
+.header {
+    background: #1f3a5f;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
+}
+
 .container {
+    max-width: 600px;
+    margin: 30px auto;
     background: white;
-    padding: 20px;
-    max-width: 500px;
-    margin: auto;
+    padding: 25px;
     border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-input, textarea, select, button {
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select, textarea {
     width: 100%;
-    margin-top: 10px;
     padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
+
+textarea {
+    resize: none;
+    height: 80px;
+}
+
 button {
-    background-color: #28a745;
+    width: 100%;
+    padding: 12px;
+    background: #1f3a5f;
     color: white;
     border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #16314f;
 }
 </style>
 </head>
 
 <body>
 
+<div class="header">
+    Sistema de Mantenimiento
+</div>
+
 <div class="container">
     <h2>Solicitud de Mantenimiento</h2>
 
-    <input type="text" id="nombre" placeholder="Nombre">
-    <input type="text" id="equipo" placeholder="Equipo">
-    
-    <select id="tipo">
-        <option>Correctivo</option>
-        <option>Preventivo</option>
-    </select>
+    <div class="form-group">
+        <label>Solicitante</label>
+        <input type="text" id="solicitante">
+    </div>
 
-    <textarea id="descripcion" placeholder="Descripción"></textarea>
+    <div class="form-group">
+        <label>Tipo de solicitud</label>
+        <select id="tipo" onchange="mostrarFrecuencia()">
+            <option value="Correctivo">Correctivo</option>
+            <option value="Preventivo">Preventivo</option>
+        </select>
+    </div>
 
-    <button onclick="guardar()">Enviar</button>
+    <div class="form-group" id="grupoFrecuencia" style="display:none;">
+        <label>Frecuencia</label>
+        <input type="text" id="frecuencia" placeholder="Ej: mensual, semanal">
+    </div>
+
+    <div class="form-group">
+        <label>Locación</label>
+        <input type="text" id="ubicacion">
+    </div>
+
+    <div class="form-group">
+        <label>Equipo</label>
+        <input type="text" id="equipo">
+    </div>
+
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="descripcion"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Prioridad</label>
+        <select id="prioridad">
+            <option>Baja</option>
+            <option selected>Media</option>
+            <option>Alta</option>
+        </select>
+    </div>
+
+    <button onclick="guardar()">Enviar solicitud</button>
 </div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// CONFIG FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyDew-CFyPQ8fIUPQf_vnInM9-JZEuV1zi8",
     authDomain: "mantenimiento-app-170e5.firebaseapp.com",
@@ -66,11 +138,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// MOSTRAR / OCULTAR FRECUENCIA
+window.mostrarFrecuencia = function () {
+    const tipo = document.getElementById("tipo").value;
+    const grupo = document.getElementById("grupoFrecuencia");
 
+    grupo.style.display = (tipo === "Preventivo") ? "block" : "none";
+}
+
+// GENERAR NUMERO
 async function generarNumero(tipo) {
     const ref = doc(db, "config", "contador");
     const snap = await getDoc(ref);
-
     let data = snap.data();
 
     let numero;
@@ -86,13 +165,16 @@ async function generarNumero(tipo) {
     return numero;
 }
 
-
+// GUARDAR
 window.guardar = async function () {
 
-    const nombre = document.getElementById("nombre").value;
-    const equipo = document.getElementById("equipo").value;
+    const solicitante = document.getElementById("solicitante").value;
     const tipo = document.getElementById("tipo").value;
+    const ubicacion = document.getElementById("ubicacion").value;
+    const equipo = document.getElementById("equipo").value;
     const descripcion = document.getElementById("descripcion").value;
+    const prioridad = document.getElementById("prioridad").value;
+    const frecuencia = document.getElementById("frecuencia").value;
 
     try {
 
@@ -107,14 +189,13 @@ window.guardar = async function () {
             fechaProgramada: null,
             fechaCierre: null,
 
-            solicitante: nombre,
-            email: "",
-
+            solicitante,
+            ubicacion,
             equipo,
-            ubicacion: "",
             descripcion,
+            prioridad,
 
-            prioridad: "Media",
+            frecuencia: tipo === "Preventivo" ? frecuencia : "",
 
             respuestaMantenimiento: "",
             proveedor: "",
@@ -125,19 +206,20 @@ window.guardar = async function () {
                 {
                     estado: "Nuevo",
                     fecha: new Date(),
-                    usuario: nombre
+                    usuario: solicitante
                 }
             ]
         });
 
         alert("Orden creada: " + numeroOrden);
 
+        location.reload();
+
     } catch (e) {
         console.error(e);
         alert("Error al guardar");
     }
 }
-
 </script>
 
 </body>
