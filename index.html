@@ -75,5 +75,29 @@ button:hover {
     </button>
 </div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "XXXXX",
+  authDomain: "XXXXX",
+  projectId: "XXXXX",
+  storageBucket: "XXXXX",
+  messagingSenderId: "XXXXX",
+  appId: "XXXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// PROTECCIÓN
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+    }
+});
+</script>
+    
 </body>
 </html>
