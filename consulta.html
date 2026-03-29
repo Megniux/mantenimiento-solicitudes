@@ -126,7 +126,8 @@ th {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    
 // TU CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyDew-CFyPQ8fIUPQf_vnInM9-JZEuV1zi8",
@@ -174,25 +175,9 @@ window.cargar = async function () {
 // Carga inicial
 cargar();
 
-</script>
+//PROTECCIÓN
+const auth = getAuth();
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "XXXXX",
-  authDomain: "XXXXX",
-  projectId: "XXXXX",
-  storageBucket: "XXXXX",
-  messagingSenderId: "XXXXX",
-  appId: "XXXXX"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// PROTECCIÓN
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = "login.html";
