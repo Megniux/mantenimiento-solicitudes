@@ -14,7 +14,6 @@ body {
 .header {
     background: #1f3a5f;
     padding: 15px 30px;
-    align-items: center;
 }
 
 .header-content {
@@ -26,15 +25,11 @@ body {
     height: 100px;
     margin-right: 20px;
 }
-
-.header-text {
-    align-items: center;
-    justify-content: center;
-}
     
 .header h1 {
     color: white;
     font-size: 32px;
+    margin: 0;
 }
 
 .container {
@@ -66,9 +61,7 @@ button:hover {
 <div class="header">
     <div class="header-content">
         <img src="logo.jpg" class="logo">
-        <div class="header-text">
-            <h1>Sistema de Mantenimiento</h1>
-        </div>
+        <h1>Sistema de Mantenimiento</h1>
         <button onclick="logout()" style="position:absolute; right:20px;">
             Cerrar sesión
         </button>
